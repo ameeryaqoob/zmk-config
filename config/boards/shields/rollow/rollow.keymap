@@ -2,7 +2,7 @@
  * Copyright (c) 2020 The ZMK Contributors
  *
  * SPDX-License-Identifier: MIT
- */ 
+ */
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
@@ -10,6 +10,19 @@
 #include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/ext_power.h>
 #define AS(keycode) &as LS(keycode) keycode
+#include <dt-bindings/zmk/mouse.h>
+
+&mmv {
+    time-to-max-speed-ms = <0>;
+    acceleration-exponent = <0>;
+    delay-ms = <0>;
+};
+
+&mwh {
+    time-to-max-speed-ms = <0>;
+    acceleration-exponent = <0>;
+    delay-ms = <0>;
+};
 
 / {
     combos {
@@ -29,7 +42,7 @@
         combo_layer_3 {
             timeout-ms = <60>;
             key-positions = <31 33>;
-            bindings = <&tog 3>;
+            bindings = <&tog 4>;
             };
         compatible = "zmk,combos";
         combo_escape {
@@ -64,6 +77,14 @@
             flavor = "tap-preferred";
             bindings = <&kp>, <&kp>;
         };
+        lm: layer_mod {
+            compatible = "zmk,behavior-hold-tap";
+            label = "LAYER_MOD";
+            #binding-cells = <2>;
+            tapping_term_ms = <130>;
+            flavor = "hold-preferred";
+            bindings = <&mo>, <&to>;
+        };
         grave_excl: grave_excl {
             compatible = "zmk,behavior-mod-morph";
             label = "GRAVE_EXCL";
@@ -72,41 +93,119 @@
             mods = <(MOD_RGUI|MOD_RSFT)>;
             keep-mods = <(MOD_RGUI)>;
         };
-        scroll_backspace: scroll_backspace {
+        left_backspace: left_backspace {
             compatible = "zmk,behavior-mod-morph";
-            label = "SCROLL_BACKSPACE";
+            label = "LEFT_BACKSPACE";
             #binding-cells = <0>;
             bindings = <&kp LEFT>, <&kp LA(BSPC)>;
             mods = <(MOD_RALT)>;
             keep-mods = <(MOD_RALT)>;
         };
-        scroll_delete: scroll_delete {
+        right_delete: right_delete {
             compatible = "zmk,behavior-mod-morph";
-            label = "SCROLL_DELETE";
+            label = "RIGHT_DELETE";
             #binding-cells = <0>;
             bindings = <&kp RIGHT>, <&kp LA(DEL)>;
             mods = <(MOD_RALT)>;
             keep-mods = <(MOD_RALT)>;
-        };
-        scroll_right: scroll_right {
+         };
+        move_right: move_right {
             compatible = "zmk,behavior-mod-morph";
-            label = "SCROLL_RIGHT";
+            label = "MOVE_RIGHT";
             #binding-cells = <0>;
-            bindings = <&scroll_delete>, <&kp LA(RIGHT)>;
+            bindings = <&right_delete>, <&kp LA(RIGHT)>;
             mods = <(MOD_RCTL)>;
         };
-        scroll_left: scroll_left {
+        move_left: move_left {
             compatible = "zmk,behavior-mod-morph";
             label = "SCROLL_LEFT";
             #binding-cells = <0>;
-            bindings = <&scroll_backspace>, <&kp LA(LEFT)>;
+            bindings = <&left_backspace>, <&kp LA(LEFT)>;
             mods = <(MOD_RCTL)>;
         };
-        scrolly: scrolly {
+        scroll_erase: scroll_erase {
             compatible = "zmk,behavior-sensor-rotate";
-            label = "SCROLLY";
+            label = "SCROLL_ERASE";
             #sensor-binding-cells = <0>;
-            bindings = <&scroll_right>, <&scroll_left>;
+            bindings = <&move_right>, <&move_left>;
+        };
+        wheel_down_slow: wheel_down_slow {
+            compatible = "zmk,behavior-mod-morph";
+            label = "WHEEL_DOWN_SLOW";
+            #binding-cells = <0>;
+            bindings = <&mwh SCROLL_VERT(100) >, <&mwh SCROLL_HOR(-100)>;
+            mods = <(MOD_LSFT)>;
+        };
+        wheel_up_slow: wheel_up_slow {
+            compatible = "zmk,behavior-mod-morph";
+            label = "WHEEL_UP_SLOW";
+            #binding-cells = <0>;
+            bindings = <&mwh SCROLL_VERT(-100)>, <&mwh SCROLL_HOR(100)>;
+            mods = <(MOD_LSFT)>;
+        };
+        scroll_mouse_slow: scroll_mouse_slow {
+            compatible = "zmk,behavior-sensor-rotate";
+            label = "SCROLL_MOUSE_SLOW";
+            #sensor-binding-cells = <0>;
+            bindings = <&wheel_up_slow>, <&wheel_down_slow>;
+        };
+        wheel_down: wheel_down {
+            compatible = "zmk,behavior-mod-morph";
+            label = "WHEEL_DOWN";
+            #binding-cells = <0>;
+            bindings = <&mwh SCROLL_VERT(500) >, <&mwh SCROLL_HOR(-500)>;
+            mods = <(MOD_LSFT)>;
+        };
+        wheel_up: wheel_up {
+            compatible = "zmk,behavior-mod-morph";
+            label = "WHEEL_UP";
+            #binding-cells = <0>;
+            bindings = <&mwh SCROLL_VERT(-500)>, <&mwh SCROLL_HOR(500)>;
+            mods = <(MOD_LSFT)>;
+        };
+        scroll_mouse: scroll_mouse {
+            compatible = "zmk,behavior-sensor-rotate";
+            label = "SCROLL_MOUSE";
+            #sensor-binding-cells = <0>;
+            bindings = <&wheel_up>, <&wheel_down>;
+        };
+        wheel_down_fast: wheel_down_fast {
+            compatible = "zmk,behavior-mod-morph";
+            label = "WHEEL_DOWN_FAST";
+            #binding-cells = <0>;
+            bindings = <&mwh SCROLL_VERT(2000) >, <&mwh SCROLL_HOR(-2000)>;
+            mods = <(MOD_LSFT)>;
+        };
+        wheel_up_fast: wheel_up_fast {
+            compatible = "zmk,behavior-mod-morph";
+            label = "WHEEL_UP_FAST";
+            #binding-cells = <0>;
+            bindings = <&mwh SCROLL_VERT(-2000)>, <&mwh SCROLL_HOR(2000)>;
+            mods = <(MOD_LSFT)>;
+        };
+        scroll_mouse_fast: scroll_mouse_fast {
+            compatible = "zmk,behavior-sensor-rotate";
+            label = "SCROLL_MOUSE_FAST";
+            #sensor-binding-cells = <0>;
+            bindings = <&wheel_up_fast>, <&wheel_down_fast>;
+        };
+        scroll_layer43: scroll_layer43 {
+            compatible = "zmk,behavior-sensor-rotate";
+            label = "SCROLL_LAYER43";
+            #sensor-binding-cells = <0>;
+            bindings = <&to 4>, <&to 3>;
+        };
+        scroll_layer53: scroll_layer53 {
+            compatible = "zmk,behavior-sensor-rotate";
+            label = "SCROLL_LAYER53";
+            #sensor-binding-cells = <0>;
+            bindings = <&to 5>, <&to 3>;
+        };
+        scroll_layer54: scroll_layer54 {
+            compatible = "zmk,behavior-sensor-rotate";
+            label = "SCROLL_LAYER54";
+            #sensor-binding-cells = <0>;
+            bindings = <&to 5>, <&to 4>;
         };
 };
         keymap {
@@ -117,21 +216,21 @@
 &as N1 Q &as N2 W &as N3 E &as N4 R &as N5 T     &as N6 Y &as N7 U &as N8 I &as N9 O &as N0 P
 &kp A &kp S &kp D &kp F &kp G                    &kp H &kp J  &kp K  &kp L   &kp APOS
 &as LSHIFT Z &kp X &kp C &kp V &kp B             &kp N &kp M  &kp COMMA &kp DOT &as RSHIFT FSLH
-     &none &tp LGUI SPACE &mo 1                  &tp RCTL RET &tp RALT BSPC &none
+     &none &tp LGUI SPACE &lm 1 4                &tp RCTL RET &tp RALT BSPC &none
                         >;
 
-sensor-bindings = <&scrolly &inc_dec_kp DOWN UP>;
+sensor-bindings = <&scroll_erase &inc_dec_kp DOWN UP>;
                 };
 
                 1 {
                  bindings = <
 &grave_excl &kp AT &kp HASH &kp DLLR &kp PRCNT                          &kp CARET &kp AMPS &kp ASTERISK &as RPAR LPAR AS(MINUS)
-&kp TAB &kp LC(UP) &kp LC(DOWN) &kp LC(LEFT) &kp LC(RIGHT)                          AS(EQUAL) AS(LBKT) AS(RBKT) AS(PIPE) AS(SEMI)
+&kp TAB &kp LC(UP) &kp LC(DOWN) &kp LC(LEFT) &kp LC(RIGHT)            AS(EQUAL) AS(LBKT) AS(RBKT) AS(PIPE) AS(SEMI)
 &as CAPS LG(Z) &kp LG(LS(Z)) &kp LG(X) &kp LG(C) &kp LG(V)            &none &none &none &none &as RSHIFT QUESTION
           &none &none &none                                             &kp RGUI &kp SPACE &none
                         >;
    
-sensor-bindings = <&scrolly &inc_dec_kp PG_DN PG_UP>;
+sensor-bindings = <&scroll_erase &inc_dec_kp PG_DN PG_UP>;
                 };
                              
                 2 {
@@ -139,15 +238,48 @@ sensor-bindings = <&scrolly &inc_dec_kp PG_DN PG_UP>;
 &none &none &none &none &none                                       &none &kp N7 &kp N8 &kp N9 AS(MINUS) 
 &none &none &none &none &none                                       &kp TAB &kp N4 &kp N5 &kp N6 AS(EQUAL)
 &none &none &none &none &none                                       &kp N0 &kp N1 &kp N2 &kp N3 &as ASTERISK SLASH
-            &none &none &none                                       &tp RCTL RET &tp RALT BSPC &kp DOT
+            &none &none &to 2                                       &tp RCTL RET &tp RALT BSPC &kp DOT
                             >;
 
-sensor-bindings = <&scrolly &inc_dec_kp DOWN UP>;
+sensor-bindings = <&scroll_erase &inc_dec_kp DOWN UP>;
+                };
+                
+                3 {
+                        bindings = <
+&kp Q &kp W &kp E &kp R &kp T            &none &none &none &none &none 
+&kp A &kp S &kp D &kp F &kp G            &none &mmv MOVE_HOR(-500) &mmv MOVE_VERT(-500) &mmv MOVE_HOR(500) &mmv MOVE_VERT(500)
+&kp LSHIFT &kp X &kp C &kp V &kp B       &none &none &none &none &none
+        &none &kp SPACE &none            &mkp RCLK &mkp LCLK &none 
+                            >;
+
+sensor-bindings = <&scroll_mouse_slow &scroll_layer43>;
+                };
+                             
+                4 {
+                        bindings = <
+&kp Q &kp W &kp E &kp R &kp T            &none &none &none &none &none 
+&kp A &kp S &kp D &kp F &kp G            &none &mmv MOVE_HOR(-1000) &mmv MOVE_VERT(-1000) &mmv MOVE_HOR(1000) &mmv MOVE_VERT(1000)
+&kp LSHIFT &kp X &kp C &kp V &kp B       &none &none &none &none &none
+        &none &kp SPACE &none            &mkp RCLK &mkp LCLK &none 
+                            >;
+
+sensor-bindings = <&scroll_mouse &scroll_layer53>;
+                };
+                
+                5 {
+                        bindings = <
+&kp Q &kp W &kp E &kp R &kp T            &mwh SCROLL_LEFT &mwh SCROLL_RIGHT &mwh SCROLL_VERT(2500) &mwh SCROLL_VERT(-2500) &none 
+&kp A &kp S &kp D &kp F &kp G            &none &mmv MOVE_HOR(-2500) &mmv MOVE_VERT(-2500) &mmv MOVE_HOR(2500) &mmv MOVE_VERT(2500)
+&kp LSHIFT &kp X &kp C &kp V &kp B       &none &none &none &none &none
+        &none &kp SPACE &none            &mkp RCLK &mkp LCLK &none 
+                            >;
+
+sensor-bindings = <&scroll_mouse_fast &scroll_layer54>;
                 };
 
-                3 {
+                6 { 
                  bindings = <
-&kp LG(LS(3)) &none &none &none &none    &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4
+&none &none &none &none &none            &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4
 &none &none &none &none &none            &none &none &none &none &none 
 &none &none &none &none &none            &none &none &none &none &ext_power EP_TOG
        &kp K_MUTE &none &none            &out OUT_USB &out OUT_BLE &bt BT_CLR
