@@ -1,0 +1,191 @@
+//cd keyboard/zmk/app; sudo west build -p -d build/left -b nice_nano_v2 -- -DSHIELD="corne_left nice_view_adapter nice_view" -DZMK_CONFIG="/Users/ameer/keyboard/zmk-config/config"
+//cd keyboard/zmk/app; sudo west build -p -d build/right -b nice_nano_v2 -- -DSHIELD="corne_right nice_view_adapter nice_view" -DZMK_CONFIG="/Users/ameer/keyboard/zmk-config/config"
+//Last we left it, trying to optimize scrolling behaviors, not very smooth idk why, Still need keymap updates, mouse on spacebar is a maybe.
+//Update: scroll behaviors have been fixed, just keymap to be done
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/pointing.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/ext_power.h>
+#include <dt-bindings/zmk/outputs.h>
+
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 2500  // default: 600
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 15    // default: 10
+
+&caps_word {
+    continue-list = <UNDERSCORE MINUS BSPC DOT COMMA>;
+};
+/ {
+    combos {
+        compatible = "zmk,combos";
+        combo_out {
+            timeout-ms = <50>;
+            key-positions = <36 41>;
+            bindings = <&to 0>;
+        };
+        compatible = "zmk,combos";
+        combo_escape {
+            timeout-ms = <50>;
+            key-positions = <1 10>;
+            bindings = <&kp ESC>;
+        };
+    };
+behaviors {    
+            hrl: homerow_mods_left {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <300>;
+            bindings = <&kp>, <&kp>;
+            //hold-trigger-key-positions = <6 7 8 9 10 18 19 20 21 22 30 31 32 33 34 39 40 41>;
+        };
+        hrr: homerow_mods_right {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <300>;
+            bindings = <&kp>, <&kp>;
+            //hold-trigger-key-positions = <1 2 3 4 5 13 14 15 16 17 25 26 27 28 29 38 37 36>;
+        }; 
+         mocapsword: mo_caps_word {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred"; 
+            tapping-term-ms = <150>;
+            bindings = <&mo>, <&caps_word>;
+        };
+         mokphp: mokphp {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred"; 
+            tapping-term-ms = <150>;
+            bindings = <&mo>, <&kp>;
+        };  
+         mokptp: mokptp {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <150>;
+            bindings = <&mo>, <&kp>;
+        };  
+         mokpb: mokpb {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            bindings = <&mo>, <&kp>;
+         };
+    };
+    keymap {
+        compatible = "zmk,keymap";
+        0 {
+            display-name = "QWERTY"; // 8 character max
+bindings = <
+&none &kp Q &kp W &kp E &kp R &kp T                                                &kp Y &kp U &kp I &kp O &kp P &none 
+&none &hrl LCTRL A &hrl LALT S &hrl LGUI D &hrl LSHIFT F &hrl LS(LG(LA(LCTRL))) G       &hrr LS(LG(LA(LCTRL))) H &hrr RSHIFT J &hrr RGUI K &hrr RALT L &hrr RCTRL APOS &none 
+&none &hrl GLOBE Z &kp X &kp C &kp V &kp B                                          &kp N &kp M &kp COMMA &kp DOT &hrr GLOBE SLASH &none
+&mocapsword 3 0 &mokpb 2 SPACE &mokphp 7 TAB                                         &mokptp 8 RETURN &mokphp 1 BSPC &mokptp 6 DEL
+              >;
+        };
+        1 {
+            display-name = "NUMBERS";
+bindings = <
+&none &kp EXCLAMATION &kp AT &kp HASH &kp DOLLAR &kp PERCENT                                                                   &kp CARET &kp AMPS &kp STAR &kp LPAR &kp RPAR &none 
+&none &hrl LCTRL N1 &hrl LALT N2 &hrl LGUI N3 &hrl LSHIFT N4 &hrl LS(LG(LA(LCTRL))) N5           &hrr LS(LG(LA(LCTRL))) N6 &hrr RSHIFT N7 &hrr RGUI N8 &hrr RALT N9 &hrr RCTRL N0 &none 
+&none &hrl GLOBE BSLH &kp LBKT &kp RBKT &kp EQUAL &kp GRAVE                                                               &kp PIPE &kp UNDER &kp COMMA  &kp DOT  &hrr GLOBE SLASH  &none
+&kp MINUS &kp SPACE &kp SEMI                                                                                               &none &none &kp TILDE
+              >;
+        };  
+        2 {
+            display-name = "MOUSE";
+bindings = <
+&none &kp ESC &none &none &none &none                                &none &kp LEFT &kp DOWN &kp UP &kp RIGHT &none 
+&none &kp LCTRL &kp LALT &kp LGUI &kp LSHIFT &kp LS(LG(LA(LCTRL))) &kp PG_UP &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &none
+&none &kp GLOBE &none &none &none &none                                  &kp PG_DN &msc SCRL_RIGHT &msc SCRL_UP &msc SCRL_DOWN &msc SCRL_LEFT &none 
+&none &none &none                                                         &mkp MB2 &mkp MB1 &mkp MB3
+              >;
+        };
+        3 {
+            display-name = "BLE";
+bindings = <
+&none &bt BT_CLR_ALL &bt BT_CLR &none &ext_power EP_TOG &out OUT_TOG                               &none &kp C_PREV &none &none &kp C_NEXT &none 
+&none &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4                             &none &none &kp C_BRI_DN &kp C_BRI_UP &none &none 
+&none &none &none &none &sys_reset &bootloader                                                     &none &none &kp C_VOL_DN &kp C_VOL_UP &none &none 
+&none &none &none                                                                                  &kp C_MUTE &kp C_PP &none   
+              >;
+        };
+        4 {
+            display-name = "NO MODS"; // 8 character max
+bindings = <
+&none &kp Q &kp W &kp E &kp R &kp T               &kp Y &kp U &kp I &kp O &kp P &none 
+&none &kp A &kp S &kp D &kp F &kp G               &kp H &kp J &kp K &kp L &kp SEMI &none 
+&none &kp Z &kp X &kp C &kp V &kp B               &kp N &kp M &kp COMMA &kp DOT &kp SLASH &none 
+&caps_word &kp SPACE &kp TAB                           &kp RETURN &kp BSPC &kp DEL
+              >;
+        };
+        5 {
+            display-name = "FPS";
+bindings = < 
+&none &mt ESC GRAVE &kp Q &kp W &kp E &kp R                              &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &none 
+&none &kp LSHIFT &kp A &kp S &kp D &kp F                         &kp PG_UP &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &none
+&none &kp Z &kp X &kp C &kp V &kp B                               &kp PG_DN &kp N6 &kp N7 &kp N8 &kp N9 &none 
+&none &kp SPACE &none                                          &mkp MB2 &mkp MB1 &mkp MB3
+              >;  
+        };
+        6 {
+            display-name = "FUNC";
+bindings = <
+&none &kp F1 &kp F2 &kp F3 &kp F4 &kp F5                          &kp F6 &kp F7 &kp F8 &kp F9 &kp F10 &none 
+&none &hrl LSHIFT F11 &hrl LALT F12 &hrl LGUI F13 &hrl LCTRL F14 &hrl LS(LG(LA(LCTRL))) F15 &hrr LS(LG(LA(LCTRL))) F16 &hrr RCTRL F17 &hrr RGUI F18 &hrr RALT F19 &hrr LSHIFT F20 &none 
+&none &hrl GLOBE F21 &kp F22 &kp F23 &kp F24 &none                &bootloader &sys_reset &none &none &kp GLOBE &none 
+      &kp PAUSE_BREAK &kp PSCRN &kp SCROLLLOCK                                          &none &none &none
+              >;
+            };
+        7 {
+            display-name = "ARROWS";
+bindings = <
+&none &kp ESC &none &none &none &none                             &kp LG(LS(Z)) &kp LG(C) &kp LG(X) &kp LG(V) &kp LG(Z) &none 
+&none &kp LCTRL &kp LALT &kp LGUI &kp LSHIFT &kp LS(LG(LA(LCTRL)))  &kp PG_UP &kp LEFT &kp DOWN &kp UP &kp RIGHT &none 
+&none &kp GLOBE &none &none &none &none               &kp PG_DN &kp HOME &kp INS &kp END &none &none 
+      &none &none &none                                          &kp RETURN &kp BSPC &kp DEL
+              >;
+            };
+        8 {
+            display-name = "STICKY";
+bindings = <
+&none &none &to 9 &none &none &none                             &none &none &none &none &none &none
+&none &none &none &none &to 5 &none                             &none &none &none &none &none &none
+&none &none &none &to 4 &none &none                             &none &none &none &none &none &none
+&to 3 &to 2 &to 7                                               &none &to 1 &to 6
+              >;
+            };    
+        9 {
+            display-name = "<WASD>";
+bindings = <
+&none &kp ESC &kp Q &kp W &kp E &kp R                             &kp N1 &kp N2 &kp N3 &kp N4 &kp N5 &none 
+&none &kp LSHIFT &kp A &kp S &kp D &kp F                        &kp PG_UP &kp LEFT &kp DOWN &kp UP &kp RIGHT &none
+&none &kp LCTRL &kp X &kp C &kp V &kp B                          &kp PG_DN &kp N6 &kp N7 &kp N8 &kp N9 &none 
+&kp EQUAL &kp SPACE &kp TAB                                          &kp LBKT &kp ENTER &kp RBKT
+              >;  
+            };
+        10 {
+            display-name = "DEAD"; // 8 character max
+bindings = <
+&none &kp Q &kp W &kp E &kp R &kp T               &kp Y &kp U &kp I &kp O &kp P &none 
+&none &kp A &kp S &kp D &kp F &kp G               &kp H &kp J &kp K &kp L &kp SEMI &none 
+&none &kp Z &kp X &kp C &kp V &kp B               &kp N &kp M &kp COMMA &kp DOT &kp SLASH &none 
+&caps_word &mokp 6 SPACE &kp TAB                           &kp RETURN &mokp 11 BSPC &kp DEL
+              >;
+        };
+        1 {
+            display-name = "DEADNUM";
+bindings = <
+&none &kp EXCLAMATION &kp AT &kp HASH &kp DOLLAR &kp PERCENT                                    &kp CARET &kp AMPS &kp STAR &kp LPAR &kp RPAR &none 
+&none &kp N1 &kp N2 &kp N3 &kp N4 &kp N5                                                         &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &none 
+&none &kp BSLH &kp LBKT &kp RBKT &kp EQUAL &kp GRAVE                                        &kp PIPE &kp UNDER &kp COMMA  &kp DOT  &kp SLASH  &none
+&kp MINUS &mokp 6 SPACE &kp SEMI                                                                                               &none &none &kp TILDE
+              >;
+        }; 
+    };
