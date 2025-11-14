@@ -156,7 +156,7 @@ bindings = <
             display-name = "STICKY";
 bindings = <
 &none &none &to 9 &none &none &none                             &none &none &none &none &none &none
-&none &none &none &none &to 5 &none                             &none &none &none &none &none &none
+&none &none &to 10 &none &to 5 &none                             &none &none &none &none &none &none
 &none &none &none &to 4 &none &none                             &none &none &none &none &none &none
 &to 3 &to 2 &to 7                                               &none &to 1 &to 6
               >;
